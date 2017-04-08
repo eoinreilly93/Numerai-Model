@@ -1,13 +1,13 @@
-####################
-# IMPORT DATA 
-####################
+                                    ####################
+                                    # IMPORT DATA 
+                                    ####################
 
 trainingdata <- read.csv("Resources/Datasets/numerai_training_data.csv", header = T, sep = ",")
 testingdata <- read.csv("Resources/Datasets/numerai_tournament_data.csv", header = T, sep = ",")
 
-#################################################
-# CONVERT CONTINUOUS DATA INTO CATEGORICAL DATA
-################################################
+                          #################################################
+                          # CONVERT CONTINUOUS DATA INTO CATEGORICAL DATA
+                          ################################################
 
 numColumns <- ncol(trainingdata)
 
