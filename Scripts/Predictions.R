@@ -1,6 +1,15 @@
+######################################
+# IMPORT NECESSARY FILES AND SETTINGS
+#####################################
+
+source("Scripts/BuildModels.R")
+
 #DISABLE SCIENTIFIC NOTATION
 options(scipen=999)
 
+#######################################
+# MAKE PREDICTIONS
+######################################
 
 #PREDICTIONS
 #TAN PREDICTIONS
