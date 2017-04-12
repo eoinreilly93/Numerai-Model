@@ -1,3 +1,5 @@
+source("Scripts/BuildModels.R")
+
 ###########################
 # 10 FOLD CROSS VALIDATION
 ###########################
@@ -46,7 +48,22 @@ temp_tanPredictions <- ifelse(temp_tanProb$Won >= .5, "WIN", "LOSS")
 temp_lrprob <- predict(temp_lrmodel, newdata=temp_testdata, type="response")
 temp_lrPredictions<- ifelse(temp_lrprob>= 0.5, 'WIN', 'LOSS')
 
+#AVERAGING ENSEMBLE 
+combinedProbs <- cbind(temp_naiveProb, temp_tanProb, temp_lrprob)
+combinedProbs$Lost <- NULL
+combinedProbs$Lost <- NULL
+colnames(combinedProbs) <- c("Naive Bayes", "TAN", "Logistic Regression")
+combinedProbs$EnsembleProb <- (rowSums(combinedProbs))/3
+combinedProbs$AverageEnsemblePred <- ifelse(combinedProbs$EnsembleProb >= .5, "WIN", "LOSS")
 
+
+#VOTING ENSEMBLE
+VotingEnsemblePrediction <- ifelse(temp_naivePredictions == temp_tanPredictions, temp_naivePredictions, 
+                                   ifelse(temp_naivePredictions != temp_tanPredictions & temp_naivePredictions 
+                                          != temp_lrPredictions,temp_lrPredictions,temp_lrPredictions ))
+
+
+combinedPredictions <- cbind(temp_naivePredictions, temp_tanPredictions, temp_lrPredictions, VotingEnsemblePrediction)
 ##########################
 # RESULTS
 #########################
@@ -59,6 +76,8 @@ table(temp_naivePredictions, correctResult)
 #ACCURACY, TPR AND TNR CALCULATIONS
 temp_naivetab <- table(temp_naivePredictions, correctResult)
 temp_naiveacc <- (sum(temp_naivetab[1], temp_naivetab[2,2])/sum(temp_naivetab))*100
+temp_naivetpr <- (temp_naivetab[2,2]/sum(temp_naivetab[,2]))*100
+temp_naivetnr <- (temp_naivetab[1,1]/sum(temp_naivetab[,1]))*100
 
 #TAN RESULTS
 table(temp_tanPredictions, correctResult)
@@ -66,6 +85,8 @@ table(temp_tanPredictions, correctResult)
 #ACCURACY, TPR AND TNR CALCULATIONS
 temp_tantab <- table(temp_tanPredictions, correctResult)
 temp_tanacc <- (sum(temp_tantab[1], temp_tantab[2,2])/sum(temp_tantab))*100
+temp_tantpr <- (temp_tantab[2,2]/sum(temp_tantab[,2]))*100
+temp_tantnr <- (temp_tantab[1,1]/sum(temp_tantab[,1]))*100
 
 #LOGISTIC REGRESSION RESULTS
 table(temp_lrPredictions, correctResult)
@@ -73,5 +94,22 @@ table(temp_lrPredictions, correctResult)
 #ACCURACY, TPR AND TNR CALCULATIONS
 temp_lrtab <- table(temp_lrPredictions, correctResult)
 temp_lracc <- (sum(temp_lrtab[1], temp_lrtab[2,2])/sum(temp_lrtab))*100
+temp_lrtpr <- (temp_lrtab[2,2]/sum(temp_lrtab[,2]))*100
+temp_lrtnr <- (temp_lrtab[1,1]/sum(temp_lrtab[,1]))*100
 
 
+#AVERAGING ENSEMBLE RESULTS
+table(combinedProbs$AverageEnsemblePred , correctResult)
+
+#ACCURACY, TPR AND TNR CALCULATIONS
+temp_avgtab <- table(combinedProbs$AverageEnsemblePred , correctResult)
+temp_avgacc <- (sum(temp_avgtab[1], temp_avgtab[2,2])/sum(temp_avgtab))*100
+temp_avgtpr <- (temp_avgtab[2,2]/sum(temp_avgtab[,2]))*100
+temp_avgtnr <- (temp_avgtab[1,1]/sum(temp_avgtab[,1]))*100
+
+#VOTING ENSEMBLE RESULTS
+table(VotingEnsemblePrediction, correctResult)
+temp_vottab <- table(VotingEnsemblePrediction, correctResult)
+temp_votacc <- (sum(temp_vottab[1], temp_vottab[2,2])/sum(temp_vottab))*100
+temp_vottpr <- (temp_vottab[2,2]/sum(temp_vottab[,2]))*100
+temp_vottnr <- (temp_vottab[1,1]/sum(temp_vottab[,1]))*100

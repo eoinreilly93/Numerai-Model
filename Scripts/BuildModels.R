@@ -1,6 +1,8 @@
-####################
-# IMPORT LIBRARIES
-####################
+################################
+# IMPORT LIBRARIES AND SCRIPTS
+################################
+
+source("Scripts/DataPreprocessing.R")
 
 library("bnlearn", lib.loc="~/R/win-library/3.3")
 library("boot", lib.loc="~/R/win-library/3.3")
